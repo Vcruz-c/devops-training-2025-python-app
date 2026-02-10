@@ -36,5 +36,37 @@ pipeline {
         sh 'docker build -t docker-build-python:1.0.0 -f devops/Dockerfile .'
       }
     }
+    /**
+    * En este stage intentaré levantar el contenedor previamente construido. Usaré el documento docker-compose.yml 
+    * Usaremos -d para evitar que se ejecute en primer plano mostrando logs en pantalla (esto no termina hasta terminar con la ejecusión del programa)
+    * Una vez levantado el contenedor, comprobamos su funcionamiento: Investigamos cual será la URL de la app en app.py y hacemos un curl para comprobar que se peude acceder.
+    * De los 2 puertos 0000:0000 usamos el de la izq. El de la derecha es el que escucha la app dentro del contenedor
+    * Por último limpiamos vólumenes al apagar el contenedor.
+    * =============================================================
+    * Con --fail interrumpimos la ejecusión del pipeline y no seguimos si falla el curl
+    * También podemos verificar el contenido en el curl para evaluar si es correcta la conexión o no... Pero más adelante
+    * Con sleep esperamos a que se levante el contenedor con un margen que decidamos (5s en este caso)
+    * Con post-always ejecutamos una acción independientemente del resultado de pasos anteriores, EJ: Si la app rompe, no se limpian los volumenes si no lo indicamos en post-always 
+    * Con when le decimos que esta parte (Despliegue/CD) solo lo haga cuando se esté en la rama develop/master, más bién, cuando se suba algo nuevo a alguna de estas
+    */
+    stage('Despliegue docker-compose'){
+      when{
+        anyOf{
+          branch 'develop'
+          branch 'master'
+        }
+
+      }
+      steps{
+        sh 'docker compose up -d'
+        sh 'sleep 5'
+        sh 'curl --fail http://localhost:5001'
+      }
+      post {
+        always {
+          sh 'docker compose down --volumes'
+        }
+      }
+    }
   }
 }
