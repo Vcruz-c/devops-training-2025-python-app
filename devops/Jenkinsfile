@@ -60,6 +60,7 @@ pipeline {
       steps{
         sh 'docker compose up -d'
         sh 'sleep 10'
+        sh 'docker compose logs app'
         sh 'curl --fail http://localhost:5001'
       }
       post {
