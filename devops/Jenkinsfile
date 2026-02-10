@@ -29,11 +29,11 @@ pipeline {
       }
     }
     // Este segundo stage es para hacer build del docker, siguiendo los pasos indicados en la práctica
-    //Usamos el agent del pipeline (any) y construimos el docker (esperando que sea todo correcto) en el contexto actual (.)
-    //Añadimos una etiqueta (tag)
+    //Usamos el agent del pipeline (any) y construimos el docker (esperando que sea todo correcto) e indicamos dónde está el Dockerfile (donde se indica la imagen a construir) en /devops
+    //Añadimos una etiqueta (tag). e indicamos con -f donde está el Dockerfile y el contexto (.)
     stage('docker build'){
       steps{
-        sh 'docker build -t docker-build-python:1.0.0 .'
+        sh 'docker build -t docker-build-python:1.0.0 -f devops/Dockerfile .'
       }
     }
   }
