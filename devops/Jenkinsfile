@@ -43,11 +43,13 @@ pipeline {
     * De los 2 puertos 0000:0000 usamos el de la izq. El de la derecha es el que escucha la app dentro del contenedor
     * Por último limpiamos vólumenes al apagar el contenedor.
     *
-    * FIX: La app solo se escucha desde dentro del contenedor, el curl se hace dentro del contenedor
+    * FIX:
+    * La app solo se escucha desde dentro del contenedor, el curl se hace dentro del contenedor
+    * Instalamos un contenedor extra con curl porque el que vamos a probar no trae curl. Este contenedor lo borramos al acabar la ejecusión (--rm), se conecta a la misma red que los contenedores (bbdd y app python). 
     * =============================================================
     * Con --fail interrumpimos la ejecusión del pipeline y no seguimos si falla el curl
     * También podemos verificar el contenido en el curl para evaluar si es correcta la conexión o no... Pero más adelante
-    * Con sleep esperamos a que se levante el contenedor con un margen que decidamos (5s en este caso)
+    * Con sleep esperamos a que se levante el contenedor con un margen que decidamos (10s en este caso)
     * Con post-always ejecutamos una acción independientemente del resultado de pasos anteriores, EJ: Si la app rompe, no se limpian los volumenes si no lo indicamos en post-always 
     * Con when le decimos que esta parte (Despliegue/CD) solo lo haga cuando se esté en la rama develop/master, más bién, cuando se suba algo nuevo a alguna de estas
     * 
@@ -64,7 +66,7 @@ pipeline {
         sh 'docker compose up -d'
         sh 'sleep 10'
         //sh 'docker compose logs app' logs para cuando queramos detalles extras en esta parte de la ejecusión 
-        sh 'docker exec my-flask-app-dc curl --fail http://localhost:5000'   //'curl --fail http://localhost:5001'. Con lo actual miramos dentro del contenedor
+        sh 'docker run --rm --network python-app_develop_scalian_training curlimages/curl:7.88.1 http://my-flask-app-dc:5000'   //'curl --fail http://localhost:5001'. Con lo actual miramos dentro del contenedor
       }
       post {
         always {
