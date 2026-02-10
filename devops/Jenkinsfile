@@ -45,7 +45,7 @@ pipeline {
     * =============================================================
     * Con --fail interrumpimos la ejecusión del pipeline y no seguimos si falla el curl
     * También podemos verificar el contenido en el curl para evaluar si es correcta la conexión o no... Pero más adelante
-    * Con sleep esperamos a que se levante el contenedor con un margen que decidamos (5s en este caso)
+    * Con sleep esperamos a que se levante el contenedor con un margen que decidamos (10s en este caso)
     * Con post-always ejecutamos una acción independientemente del resultado de pasos anteriores, EJ: Si la app rompe, no se limpian los volumenes si no lo indicamos en post-always 
     * Con when le decimos que esta parte (Despliegue/CD) solo lo haga cuando se esté en la rama develop/master, más bién, cuando se suba algo nuevo a alguna de estas
     */
@@ -59,7 +59,7 @@ pipeline {
       }
       steps{
         sh 'docker compose up -d'
-        sh 'sleep 5'
+        sh 'sleep 10'
         sh 'curl --fail http://localhost:5001'
       }
       post {
