@@ -28,5 +28,13 @@ pipeline {
         sh 'pytest -v' //Ejecutamos los test disponibles (buscará automáticamente en /test/test_capitalize.py)
       }
     }
+    // Este segundo stage es para hacer build del docker, siguiendo los pasos indicados en la práctica
+    //Usamos el agent del pipeline (any) y construimos el docker (esperando que sea todo correcto) en el contexto actual (.)
+    //Añadimos una etiqueta (tag)
+    stage('docker build'){
+      steps{
+        sh 'docker build -t docker-build-python:1.0.0 .'
+      }
+    }
   }
 }
