@@ -34,7 +34,6 @@ pipeline {
     stage('docker build'){
       steps{
         sh 'docker build -t contrerasadr/devops-training-2025-python-app:0.0.1 -f devops/Dockerfile .'
-        sh 'echo BRANCH_NAME=$BRANCH_NAME'
       }
     }
     /**
